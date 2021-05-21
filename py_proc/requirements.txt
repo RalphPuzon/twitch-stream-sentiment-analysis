@@ -1,0 +1,15 @@
+aniso8601
+click
+Flask
+itsdangerous
+Jinja2
+MarkupSafe
+pytz
+six
+SQLAlchemy
+Werkzeug
+pandas
+numpy
+matplotlib.pyplot
+seaborn
+pandasql
