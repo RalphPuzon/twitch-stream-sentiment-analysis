@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pandasql import sqldf
 from textblob import TextBlob
-
+from nltk.corpus import stopwords
+stop_words = set(stopwords.words('english'))
 
 def jsonl_processor(file, csvpath):
 	null = ''
@@ -34,9 +35,11 @@ def jsonl_processor(file, csvpath):
 
 def grapher(file):
 	#clean:
-	rx = re.compile('[^a-z0-9]s')
 	df = pd.read_csv(file)
-	df['message'] = df.message.apply(lambda x: rx.sub('', x))
+	df['message'] = df.message.apply(lambda x: x.lower())
+	df['message'] = df.message.apply(lambda x: re.sub(r'[^A-Za-z0-9 ]+', '', x))
+	df['message'] = df.message.apply(lambda x: x.split(' '))
+	df['message'] = df.message.apply(lambda x: ' '. join([word for word in x if word not in stop_words]))
 	df['time'] = pd.to_datetime(df['time'], format='%H:%M:%S').dt.time
 	#sentiment:
 	df['sentiment'] = df.message.apply(lambda x: TextBlob(x).sentiment[0])
@@ -53,6 +56,7 @@ def grapher(file):
 				y='avg_sentiment', 
 				data = chart_df)
 	curr_chart.figure.savefig(file[:-4] + "_chart.png")
+	curr_chart.clear()
 
 if __name__ == "__main__":
 	rec_root = os.path.join(os.path.realpath(__file__), '..', 'records')
