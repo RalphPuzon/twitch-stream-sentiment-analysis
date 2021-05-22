@@ -12,7 +12,7 @@ class MsgLogger(Resource):
         pdt = json.loads(request.get_data().decode("UTF-8"))
         channel = pdt["channel"][1:]
         date = d.now().strftime("%m-%d-%Y")
-        filename = os.path.join(rec_root, channel, str(date), "_x_" + channel + ".json")
+        filename = os.path.join(rec_root, channel, (str(date) + "_x_" + channel + ".json"))
         try:
             if not os.path.exists(os.path.dirname(filename)):
                 os.makedirs(os.path.dirname(filename))
