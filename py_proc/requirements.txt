@@ -13,3 +13,4 @@ numpy
 matplotlib.pyplot
 seaborn
 pandasql
+bokeh

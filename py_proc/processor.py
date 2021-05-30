@@ -1,12 +1,16 @@
 import os, re, json, ast, csv
 from datetime import datetime as dt
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 from pandasql import sqldf
 from textblob import TextBlob
 from nltk.corpus import stopwords
 stop_words = set(stopwords.words('english'))
+
+from bokeh.plotting import figure, output_file, show, save, ColumnDataSource
+from bokeh.models.tools import HoverTool
+#from bokeh.transform import factor_cmap
+#from bokeh.palettes import Blues8
+from bokeh.embed import components
 
 def jsonl_processor(file, csvpath):
 	null = ''
@@ -34,6 +38,8 @@ def jsonl_processor(file, csvpath):
 					writer.writerow([time, message])
 
 def grapher(file):
+	filename = file[:-4]
+	stream_date, channel = filename.split("_x_", 1)
 	#clean:
 	df = pd.read_csv(file)
 	df['message'] = df.message.apply(lambda x: x.lower())
@@ -43,20 +49,47 @@ def grapher(file):
 	df['time'] = pd.to_datetime(df['time'], format='%H:%M:%S').dt.time
 	#sentiment:
 	df['sentiment'] = df.message.apply(lambda x: TextBlob(x).sentiment[0])
+	df.to_csv(filename+".csv", index=False)
 
 	#aggregate:
-	q =   """SELECT time, 
-					AVG(sentiment) as avg_sentiment
-					FROM df 
-					GROUP BY time"""
+	q=	 """SELECT time, 
+			AVG(sentiment) as avg_sentiment,
+			GROUP_CONCAT(message) as ts_text
+			FROM df 
+			GROUP BY time"""
 
 	chart_df = sqldf(q, locals())
-	#graph
-	curr_chart= sns.lineplot(x='time', 
-				y='avg_sentiment', 
-				data = chart_df)
-	curr_chart.figure.savefig(file[:-4] + "_chart.png")
-	curr_chart.clear()
+	chart_df.to_csv(filename+".csv", index=False)
+
+	"""
+	#Bokeh
+	#cds
+	source = ColumnDataSource(chart_df)
+
+	#figure
+	p = figure(
+		#plot_width = 800,
+		#plot_height=600,
+		title= channel + "'s chat sentiment on " + str(stream_date),
+	)
+	#render glyph
+	p.line(
+		source = source,
+		x = 'time',
+		y =  'sentiment'
+
+	)
+
+	#figure mods:
+	p.xgrid.grid_line_color = None
+	p.ygrid.grid_line_color = None
+
+	#tooltips
+
+	#save
+
+	output_file(filename + ".html")
+	"""
 
 if __name__ == "__main__":
 	rec_root = os.path.join(os.path.realpath(__file__), '..', 'records')

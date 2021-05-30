@@ -1,0 +1,4 @@
+make channel template:
+- when no date param is given, you render the latets bokeh graph
+time param:
+    - render html of specified date.
