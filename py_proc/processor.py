@@ -25,7 +25,7 @@ def jsonl_processor(file, csvpath):
 
 			date = dt.fromtimestamp(data_dict['timestamp']//1000).strftime("%Y-%m-%d")
 			time = dt.fromtimestamp(data_dict['timestamp']//1000).strftime("%H:%M:%S")
-			message = data_dict['message']
+			message = str(data_dict['message'].encode('ascii', 'ignore'))[1:]
 			
 			with open(os.path.join(csvpath, filename), 'a+', newline="") as fl:
 				writer = csv.writer(fl, delimiter = ',')
