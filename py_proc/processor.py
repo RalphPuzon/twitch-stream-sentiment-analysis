@@ -52,7 +52,7 @@ def grapher(file):
 	df.to_csv(filename+".csv", index=False)
 
 	#aggregate:
-	q=	 """SELECT time, 
+	q =  """SELECT time, 
 			AVG(sentiment) as avg_sentiment,
 			GROUP_CONCAT(message) as ts_text
 			FROM df 
@@ -77,7 +77,6 @@ def grapher(file):
 		source = source,
 		x = 'time',
 		y =  'sentiment'
-
 	)
 
 	#figure mods:
@@ -97,11 +96,24 @@ if __name__ == "__main__":
 	for direc in dirnames: #remember that the direc is also the channel name
 		path = os.path.join(rec_root, direc)
 		os.chdir(path)
+		wfiles = [d for d in os.listdir('.') if d[-4:] == 'json']
+		for wf in wfiles:
+			if os.path.exists(wf[:-5]+".csv"):
+				continue
+			else:
+				jsonl_processor(wf, path)
+		gfiles = [d for d in os.listdir('.') if d[-3:] == 'csv']
+		for gf in gfiles:
+			if os.path.exists(wf[:-4]+".html"):
+				continue
+			else:
+				grapher(gf)
+		"""
 		wfile = max([d for d in os.listdir('.') if d[-4:] == 'json'], key=os.path.getctime)
 		jsonl_processor(wfile, path)
 		gfile = max([d for d in os.listdir('.') if d[-3:] == 'csv'], key=os.path.getctime)
 		grapher(gfile)
-		
+		"""
 """
 this will be ran as a cron job everyday on the latest file.
 
