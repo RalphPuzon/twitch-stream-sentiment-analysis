@@ -2,3 +2,4 @@ node_modules/
 __init__.py
 records/
 __pycache__
+react-d3-frontend/package.json
