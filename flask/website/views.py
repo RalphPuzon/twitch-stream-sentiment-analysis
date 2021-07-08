@@ -17,7 +17,7 @@ def home():
     return render_template("home.html")
 
 
-#currently broken
+#TODO: figure out how to pass DB context into channel page
 """
 @views.route('/<string:name>', methods = ['GET','POST'])
 def channel_view():
