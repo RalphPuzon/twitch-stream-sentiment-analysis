@@ -1,6 +1,11 @@
+flask
+flask-restful
+pandasql
+textblob
+nltk
+bokeh
 aniso8601
 click
-Flask
 itsdangerous
 Jinja2
 MarkupSafe
@@ -12,5 +17,3 @@ pandas
 numpy
 matplotlib.pyplot
 seaborn
-pandasql
-bokeh
