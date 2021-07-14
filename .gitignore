@@ -3,3 +3,4 @@ __init__.py
 records/
 __pycache__
 react-d3-frontend/package.json
+JS_scraper/.env
